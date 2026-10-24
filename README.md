@@ -1,8 +1,6 @@
 # Yang-Terakhir-Kedip-Jodoh-Nero-Star-Trek
 Eleuh sia kumaha tah // I never win these types of game in Elementary school, and I don't do this with anyone so i built something that can play this game with me
 
--
-
 A staring contest against a robot, your webcam watches your eyes, and whoever blinks first loses.
  HTML/CSS/JS with no build step (I have no clue how to do that) MediaPipe Face Landmarker is loaded as an ES module from a CDN
 
