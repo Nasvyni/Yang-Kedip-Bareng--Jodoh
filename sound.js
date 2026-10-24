@@ -1,4 +1,4 @@
-// Tiny WebAudio sound effects – no audio files needed.
+// small WebAudio sound effects socute
 let ctx = null;
 let muted = false;
 
@@ -31,7 +31,7 @@ function tone(freq, dur = 0.12, type = "square", vol = 0.05, delay = 0, slideTo 
 export function setMuted(value) { muted = value; }
 
 export const sfx = {
-  unlock: ensure, // call from a user gesture so iOS/Safari allow audio
+  unlock: ensure, // call from user gesture so that, again, iOS/Safari will allow audio
   tick: () => tone(660, 0.08),
   go: () => { tone(880, 0.12); tone(1320, 0.22, "square", 0.05, 0.12); },
   warn: () => tone(300, 0.15, "sawtooth", 0.05),
