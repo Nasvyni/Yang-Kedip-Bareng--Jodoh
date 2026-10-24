@@ -1,7 +1,8 @@
-// The AI opponent. Drives the SVG in index.html through a data-state attribute
-// (all visuals live in style.css) and owns the speech bubble.
-//
-// States: idle | staring | squinting | blinked | won | lost
+// AI
+// Drives the SVG in index.html pke datastate attribute
+// has the speech bubble dll
+// -- - - -- - - - -- - - - -- - -- - -- - - - -- - - - - - - - -- - - -
+// states: idle | staring | squinting | blinked | won | lost
 
 const STARE_LINES = [
   "I don't even have eyelids. Oh wait.",
@@ -16,7 +17,7 @@ const SQUINT_LINES = [
   "Not… going… to… blink…",
   "My pixels are burning!",
   "Okay, this is actually hard.",
-  "Please blink. PLEASE.",
+  "Please blink. PLEASE!!",
 ];
 const WIN_LINES = [
   "Blink! Got you.",
@@ -28,7 +29,7 @@ const LOSE_LINES = [
   "I blinked! How?!",
   "Rematch. Right now.",
   "My eyes… they betrayed me.",
-  "Fine. You win. This time.",
+  "Fine. You win, This time only tho.",
 ];
 
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -54,13 +55,13 @@ export class Avatar {
     if (state !== "squinting") this.setTremble(0);
   }
 
-  /** Show the blink for `ms`, then settle into `next` (used when the AI loses). */
+  /** showin  blink for `ms`, then settle into `next` (when ai lose). */
   blinkThen(next, ms = 380) {
     this.setState("blinked");
     this.timer = setTimeout(() => this._apply(next), ms);
   }
 
-  /** Face shake in SVG px. 0 = still. */
+  /** Face shake!!!!!!!! */
   setTremble(px) {
     this.svg.style.setProperty("--tremble", `${px.toFixed(2)}px`);
   }
