@@ -1,10 +1,10 @@
-// Eye Aspect Ratio + blink detection (pure functions + a small state class).
+// eye aspect ratio & blink detection
 //
-// MediaPipe Face Landmarker returns 478 normalized landmarks per face.
-// These are the six points per eye used by the EAR formula
+// MediaPipe Face Landmarker returns 478 normalized landmarks per face (hell)
+// points for the ear formula
 //   EAR = (|p2-p6| + |p3-p5|) / (2 * |p1-p4|)
-// ordered p1 (outer corner), p2, p3 (upper lid), p4 (inner corner), p5, p6 (lower lid).
-// "left" / "right" refer to the subject's own eyes.
+// iwannaget p1 (outer corner), p2, p3 (upper lid), p4 (inner corner), p5, p6 (lower lid).
+// "left" / "right" is abt the user 
 export const EYES = {
   left:  [362, 385, 387, 263, 373, 380],
   right: [33, 160, 158, 133, 153, 144],
@@ -20,9 +20,9 @@ export function eyeEAR(landmarks, idx, width, height) {
 }
 
 /**
- * Rough head-turn estimate from the nose tip vs. the two face edges.
- * 0 = facing the camera, grows toward 1 as the head turns sideways.
- * Roughly 0.5 corresponds to ~45° of yaw.
+ *  headturn estimate from the nose tip vs the 2 face edges
+ * 0 = facing the camera n grows toward 1 as the head turns sideways
+ * (roughly) 0.5 corresponds to ~45° of yaw
  */
 export function headTurn(landmarks) {
   const nose = landmarks[1], left = landmarks[234], right = landmarks[454];
@@ -62,11 +62,11 @@ export class BlinkDetector {
     if (this.calibrating && Number.isFinite(ear)) this.samples.push(ear);
   }
 
-  /** Returns true if enough samples were collected to set a personal threshold. */
+  /** returns true if enough samples is collected to set threshold */
   finishCalibration(minSamples = 10) {
     this.calibrating = false;
     if (this.samples.length < minSamples) return false;
-    // Use the 75th percentile as "eyes open" so natural blinks during calibration don't drag it down.
+    // use  75th percentile as "eyes open" so blinks during calibration dont drag it down
     const sorted = [...this.samples].sort((a, b) => a - b);
     this.baseline = sorted[Math.floor(sorted.length * 0.75)];
     this.threshold = clamp(this.baseline * this.thresholdRatio, 0.12, 0.24);
@@ -79,8 +79,8 @@ export class BlinkDetector {
   }
 
   /**
-   * Feed one frame. Both eyes must be under the threshold.
-   * Returns true exactly once per blink, on the frame the blink is confirmed.
+   * givesreturns one frame + both eyes must be under the threshold
+   * returns true exactly once per blink, ON the frame the blink is confirmed (!!!!!!)
    */
   update(earLeft, earRight) {
     const bothClosed = earLeft < this.threshold && earRight < this.threshold;
