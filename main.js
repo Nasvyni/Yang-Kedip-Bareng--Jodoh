@@ -1,5 +1,4 @@
-// Don't Blink! – staring contest vs. an AI.
-// No build step: MediaPipe is loaded as an ES module straight from a CDN.
+// AGAIN, NO build step:((
 import {
   FaceLandmarker,
   FilesetResolver,
@@ -10,14 +9,14 @@ import { Avatar } from "./avatar.js";
 import { sfx, setMuted } from "./sound.js";
 
 /* ------------------------------------------------------------------ */
-/* Config                                                              */
+/* config     !                                   !                   !    */
 /* ------------------------------------------------------------------ */
 const WASM_URL  = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm";
 const MODEL_URL = "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
 
 const CONFIG = {
-  // Seconds the AI can last. The blink time is drawn uniformly from this window,
-  // which means the chance of blinking "right now" rises the longer the match goes.
+  // ai lasting seconds, The blink time is drawn from this
+  // + means the chance of blinking "right now" rises the LONGER the match go
   difficulty: {
     easy:   { min: 10, max: 20 },
     medium: { min: 25, max: 45 },
@@ -25,14 +24,14 @@ const CONFIG = {
   },
   countdownMs: 3000,
   faceLostGraceMs: 3000,
-  maxHeadTurn: 0.5,        // ≈45° (see headTurn() in ear.js)
+  maxHeadTurn: 0.5,        // 45ish (see: headTurn() in ear.js)
   minCalibrationSamples: 10,
-  squintStartsAt: 0.6,     // AI starts straining at 60% of its own blink time
+  squintStartsAt: 0.6,     // AI straining at 60% of its own blink time (so not too hard amarite)
   tauntEveryMs: 7000,
 };
 
 /* ------------------------------------------------------------------ */
-/* DOM                                                                 */
+/* DOM             !              !           !                           */
 /* ------------------------------------------------------------------ */
 const $ = (id) => document.getElementById(id);
 const video = $("video");
@@ -58,8 +57,9 @@ const avatar = new Avatar($("avatar"), $("bubble"));
 const detector = new BlinkDetector({ defaultThreshold: 0.20, minFrames: 2 });
 
 /* ------------------------------------------------------------------ */
-/* Stats (localStorage, always wrapped – it can be blocked)            */
+/* Stats            */
 /* ------------------------------------------------------------------ */
+/* (localStorage=always wrapped altho it can be blocked) */
 const STORE_KEY = "dontblink.v1";
 
 function loadStats() {
@@ -90,26 +90,26 @@ function renderStats() {
 }
 
 /* ------------------------------------------------------------------ */
-/* State                                                               */
+/* state                                                               */
 /* ------------------------------------------------------------------ */
 let landmarker = null;
 let stream = null;
 let rafId = 0;
 let lastVideoTime = -1;
 
-// phase: loading | idle | countdown | playing | over
+// phases: loading | idle | countdown | playing | over
 let phase = "loading";
 let countdownStart = 0;
 let lastCountdownNumber = 0;
 let matchStart = 0;
-let aiBlinkAt = 0;        // ms after matchStart
-let faceLostAt = null;    // timestamp when the face was lost, or null
+let aiBlinkAt = 0;        // ms aftr matchStart
+let faceLostAt = null;    // timestamp wehn  face was lost/null
 let lastWarnSecond = -1;
 let lastTauntAt = 0;
 let face = { landmarks: null, ok: false, earL: 0, earR: 0, turn: 0 };
 
 /* ------------------------------------------------------------------ */
-/* UI helpers                                                          */
+/* UI helpers   !                                         !            */
 /* ------------------------------------------------------------------ */
 function setStatus(text, warn = false) {
   statusEl.textContent = text;
@@ -129,7 +129,7 @@ function showBanner(text, kind) {
 function hideBanner() { banner.hidden = true; }
 
 /* ------------------------------------------------------------------ */
-/* Model + camera                                                      */
+/* the model & camera                                                      */
 /* ------------------------------------------------------------------ */
 async function initLandmarker() {
   try {
@@ -189,13 +189,13 @@ function cameraErrorMessage(err) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Main loop                                                           */
+/* main loop                                                           */
 /* ------------------------------------------------------------------ */
 function loop() {
   rafId = requestAnimationFrame(loop);
   const now = performance.now();
 
-  // Only run detection when the webcam delivered a new frame.
+  // ONLY run detection when webcam delivr new frame
   if (video.readyState >= 2 && video.currentTime !== lastVideoTime) {
     lastVideoTime = video.currentTime;
     const result = landmarker.detectForVideo(video, now);
@@ -260,7 +260,7 @@ function drawOverlay() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Game flow                                                           */
+/* game flw                                                           */
 /* ------------------------------------------------------------------ */
 function pickAiBlinkTime(difficulty) {
   const { min, max } = CONFIG.difficulty[difficulty];
@@ -270,7 +270,7 @@ function pickAiBlinkTime(difficulty) {
 async function startMatch() {
   if (phase !== "idle" && phase !== "over") return;
   startBtn.disabled = true;
-  sfx.unlock(); // inside the click handler so Safari allows audio
+  sfx.unlock(); // inside click handler so my safari allow audio
   hideBanner();
 
   if (!stream) {
@@ -293,7 +293,7 @@ async function startMatch() {
   avatar.say("Eyes up. Here we go.");
   timerEl.textContent = fmt(0);
   camFrame.classList.remove("danger");
-  setStatus("Calibrating. Look at the camera with relaxed, open eyes.");
+  setStatus("Calibrating... Please/ Look at the camera with relaxed and open eyes.");
   countdownStart = performance.now();
   lastCountdownNumber = 0;
 }
@@ -317,7 +317,7 @@ function tickGame(now) {
   const elapsed = now - matchStart;
   timerEl.textContent = fmt(elapsed);
 
-  // The AI strains harder the closer it gets to its own blink.
+  // AI strains harder the closer it get to its own blink
   const progress = elapsed / aiBlinkAt;
   if (progress >= CONFIG.squintStartsAt) {
     if (avatar.state !== "squinting") { avatar.setState("squinting"); avatar.saySquint(); }
@@ -328,7 +328,7 @@ function tickGame(now) {
     avatar.sayStare();
   }
 
-  // Face lost / turned away: warn, then forfeit.
+  // Face lost/turned away: warn + forfeitgame
   if (faceLostAt !== null) {
     const remaining = CONFIG.faceLostGraceMs - (now - faceLostAt);
     if (remaining <= 0) return endMatch("forfeit", now);
@@ -339,7 +339,7 @@ function tickGame(now) {
   } else {
     lastWarnSecond = -1;
     camFrame.classList.remove("danger");
-    setStatus("Keep your eyes open!");
+    setStatus("Keep your eyes open!!!!!!!!");
   }
 
   if (elapsed >= aiBlinkAt) endMatch("win", now);
@@ -410,7 +410,7 @@ function endMatch(result, now) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Events                                                              */
+/* events                                                              */
 /* ------------------------------------------------------------------ */
 startBtn.addEventListener("click", startMatch);
 diffSelect.addEventListener("change", renderStats);
@@ -423,7 +423,7 @@ hideCamToggle.addEventListener("change", () => {
     : "Camera is off.<br>Press Start to turn it on.";
 });
 
-// Release the camera when the page goes away.
+// release camera when  page goes away (im not scary i swear)
 window.addEventListener("pagehide", () => {
   stream?.getTracks().forEach((t) => t.stop());
 });
