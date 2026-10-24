@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Don't Blink! – staring contest vs. an AI</title>
+  <meta name="description" content="A staring contest against a robot. Your webcam watches your eyes; blink first and you lose. All processing stays in your browser.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%91%81%EF%B8%8F%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="top">
+    <h1>Don't blink!</h1>
+    <div class="top-stats">
+      <div class="stat">
+        <span class="stat-label">Best on <b id="bestDiffName">medium</b></span>
+        <span class="stat-value" id="bestTime">–</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Record</span>
+        <span class="stat-value" id="record">0 W · 0 L</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="arena" aria-label="Match">
+      <figure class="panel" id="playerPanel">
+        <div class="frame" id="camFrame">
+          <video id="video" playsinline muted></video>
+          <canvas id="overlay"></canvas>
+          <div class="cam-placeholder" id="camPlaceholder">Camera is off.<br>Press Start to turn it on.</div>
+          <div class="hud" id="hud" aria-live="off">No camera</div>
+          <div class="countdown" id="countdown" aria-hidden="true"></div>
+        </div>
+        <figcaption>You</figcaption>
+      </figure>
+
+      <figure class="panel" id="aiPanel">
+        <div class="frame frame-ai">
+          <svg id="avatar" viewBox="0 0 300 300" data-state="idle" role="img" aria-label="Blinky, the AI opponent">
+            <defs>
+              <clipPath id="clipL"><ellipse cx="95" cy="135" rx="38" ry="32"/></clipPath>
+              <clipPath id="clipR"><ellipse cx="205" cy="135" rx="38" ry="32"/></clipPath>
+            </defs>
+            <g id="face">
+              <line class="antenna" x1="150" y1="58" x2="150" y2="26"/>
+              <circle class="bulb" cx="150" cy="22" r="10"/>
+              <rect class="head" x="38" y="58" width="224" height="214" rx="64"/>
+              <rect class="ear" x="20" y="134" width="22" height="56" rx="10"/>
+              <rect class="ear" x="258" y="134" width="22" height="56" rx="10"/>
+
+              <!-- left eye -->
+              <ellipse class="sclera" cx="95" cy="135" rx="38" ry="32"/>
+              <g clip-path="url(#clipL)">
+                <circle class="pupil" cx="95" cy="135" r="15"/>
+                <circle class="glint" cx="101" cy="129" r="4"/>
+                <rect class="lid lid-top" x="55" y="103" width="80" height="64"/>
+                <rect class="lid lid-bottom" x="55" y="103" width="80" height="64"/>
+              </g>
+              <!-- right eye -->
+              <ellipse class="sclera" cx="205" cy="135" rx="38" ry="32"/>
+              <g clip-path="url(#clipR)">
+                <circle class="pupil" cx="205" cy="135" r="15"/>
+                <circle class="glint" cx="211" cy="129" r="4"/>
+                <rect class="lid lid-top" x="165" y="103" width="80" height="64"/>
+                <rect class="lid lid-bottom" x="165" y="103" width="80" height="64"/>
+              </g>
+
+              <path class="mouth m-idle" d="M118 222 H182"/>
+              <path class="mouth m-squint" d="M110 224 q10 -11 20 0 t20 0 t20 0"/>
+              <path class="mouth m-won" d="M102 204 Q150 258 198 204 Z"/>
+              <ellipse class="mouth m-lost" cx="150" cy="226" rx="15" ry="19"/>
+              <path class="sweat" d="M252 96 q-12 18 0 26 q12 -8 0 -26 Z"/>
+            </g>
+          </svg>
+          <div class="bubble" id="bubble" aria-live="polite">Ready when you are.</div>
+        </div>
+        <figcaption>Blinky</figcaption>
+      </figure>
+    </section>
+
+    <section class="match" aria-label="Match status">
+      <div class="timer" id="timer" role="timer">00:00.000</div>
+      <p class="status" id="status" aria-live="polite">Loading the face-tracking model…</p>
+    </section>
+
+    <section class="controls" aria-label="Controls">
+      <button id="startBtn" class="primary" disabled>Start</button>
+      <label class="field">
+        <span>Difficulty</span>
+        <select id="difficulty">
+          <option value="easy">Easy (10–20 s)</option>
+          <option value="medium" selected>Medium (25–45 s)</option>
+          <option value="hard">Hard (45–90 s)</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" id="debugToggle"> Show face mesh</label>
+      <label class="check"><input type="checkbox" id="hideCamToggle"> Hide my camera</label>
+      <label class="check"><input type="checkbox" id="muteToggle"> Mute</label>
+    </section>
+  </main>
+
+  <footer>
+    <p>Everything runs in your browser. Your video is never uploaded or stored.</p>
+  </footer>
+
+  <div class="banner" id="banner" role="alert" hidden></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
