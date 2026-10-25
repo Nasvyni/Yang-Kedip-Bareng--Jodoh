@@ -1,4 +1,4 @@
-# Yang-Terakhir-Kedip-Jodoh-Nero-Star-Trek
+# Yang-Kedip-Bareng-Jodoh
 Eleuh sia kumaha tah // I never win these types of game in Elementary school, and I don't do this with anyone so i built something that can play this game with me
 
 A staring contest against a robot, your webcam watches your eyes, and whoever blinks first loses.
